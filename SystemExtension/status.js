@@ -61,13 +61,11 @@
 
     function c(n, a, cb) {
       self._toggleLoading(true);
-      API.call(n, a, function(response) {
+      API.call(n, a, function(err, result) {
         self._toggleLoading(false);
-        if ( response.result ) {
-          cb(response);
+        if ( result ) {
+          cb(result);
         }
-      }, function(err) {
-        self._toggleLoading(false);
       });
     }
 
@@ -75,13 +73,13 @@
       if ( current === 0 ) {
         c('ifconfig', {command: 'status', device: true}, function(response) {
           if ( networkStatus ) {
-            networkStatus.set('value', JSON.stringify(response.result, null, 4));
+            networkStatus.set('value', JSON.stringify(response, null, 4));
           }
         });
       } else if ( current === 1 ) {
         c('iwconfig', {command: 'status', device: true}, function(response) {
           if ( wifiStatus ) {
-            wifiStatus.set('value', JSON.stringify(response.result, null, 4));
+            wifiStatus.set('value', JSON.stringify(response, null, 4));
           }
         });
       }
