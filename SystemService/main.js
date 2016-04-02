@@ -44,7 +44,6 @@
   SystemService.prototype.destroy = function() {
     var wm = OSjs.Core.getWindowManager();
     if ( wm ) {
-      wm.removeNotificationIcon('SystemServiceNotification');
       wm.removeNotificationIcon('SoundNotification');
       wm.removeNotificationIcon('BatteryNotification');
       wm.removeNotificationIcon('NetworkNotification');
@@ -61,14 +60,24 @@
       throw new Error('The SystemExtension was not loaded');
     }
 
+    var pm = OSjs.Core.getPackageManager();
+    if ( pm ) {
+      pm.addDummyPackage('SystemServiceDummyConfigureSystem', 'Configure System', 'devices/computer.png', function() {
+        OSjs.Extensions.SystemExtension.System.openDialog();
+      });
+      pm.addDummyPackage('SystemServiceDummyConfigureWIFI', 'Configure WIFI', 'devices/computer.png', function() {
+        OSjs.Extensions.SystemExtension.WIFI.openDialog();
+      });
+      pm.addDummyPackage('SystemServiceDummyConfigureNetwork', 'Configure Network', 'devices/computer.png', function() {
+        OSjs.Extensions.SystemExtension.Network.openDialog();
+      });
+      pm.addDummyPackage('SystemServiceDummyShowSystemStatys', 'Show System Status', 'devices/computer.png', function() {
+        OSjs.Extensions.SystemExtension.Status.openDialog();
+      });
+    }
+
     var wm = OSjs.Core.getWindowManager();
     if ( wm ) {
-      wm.createNotificationIcon('SystemServiceNotification', {
-        image: OSjs.API.getIcon('devices/computer.png', '16x16'),
-        title: 'System',
-        onClick: this.showMenu
-      });
-
       wm.createNotificationIcon('SoundNotification', {
         image: OSjs.API.getIcon('status/audio-volume-muted.png', '16x16'),
         title: 'Volume',
@@ -100,30 +109,6 @@
     OSjs.Extensions.SystemExtension.Network.openDialog();
     OSjs.Extensions.SystemExtension.Status.openDialog();
     */
-  };
-
-  SystemService.prototype.showMenu = function(ev) {
-    OSjs.API.createMenu([{
-      title: 'Configure System',
-      onClick: function() {
-        OSjs.Extensions.SystemExtension.System.openDialog();
-      }
-    }, {
-      title: 'Configure WIFI',
-      onClick: function() {
-        OSjs.Extensions.SystemExtension.WIFI.openDialog();
-      }
-    }, {
-      title: 'Configure Network',
-      onClick: function() {
-        OSjs.Extensions.SystemExtension.Network.openDialog();
-      }
-    },{
-      title: 'Show System Status',
-      onClick: function() {
-        OSjs.Extensions.SystemExtension.Status.openDialog();
-      }
-    }], ev);
   };
 
   SystemService.prototype.showSoundMenu = function(ev) {
